@@ -1,0 +1,26 @@
+    var sharedDataReq = new XMLHttpRequest();
+    sharedDataReq.onreadystatechange = function() {
+          if (sharedDataReq.readyState === 4) {
+            if(sharedDataReq.status === 200){
+              var sharedData = JSON.parse(sharedDataReq.responseText);
+              window.__initialDataLoaded(sharedData, extra);
+    sharedDataReq.open('GET', '/data/shared_data/', true);
+    sharedDataReq.send(null);
+<script type="text/javascript">window._sharedData = {this is test data here};</script>
+<script type="text/javascript">window.__initialDataLoaded(window._sharedData);</script>
+      var propValue = window._sharedData && window._sharedData[propName];
+<link rel="preload" href="/static/bundles/metro/Vendor.js/5a56d51ae30f.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/en_US.js/7fb2e671e6c4.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/ConsumerLibCommons.js/878b8e85ec2a.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/ConsumerUICommons.js/835a0bbcbd2f.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/ConsumerAsyncCommons.js/533d9f07a7ef.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/Consumer.js/2bea267bf793.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<link rel="preload" href="/static/bundles/metro/ProfilePageContainer.js/92073fb793d1.js" as="script" type="text/javascript" crossorigin="anonymous" />
+<script type="text/javascript" src="/static/bundles/metro/Polyfills.js/50c242a5fc3c.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/Vendor.js/5a56d51ae30f.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/en_US.js/7fb2e671e6c4.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/ConsumerLibCommons.js/878b8e85ec2a.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/ConsumerUICommons.js/835a0bbcbd2f.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/ConsumerAsyncCommons.js/533d9f07a7ef.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="/static/bundles/metro/Consumer.js/2bea267bf793.js" crossorigin="anonymous" charset="utf-8" async=""></script>
+<script type="text/javascript" src="/static/bundles/metro/ProfilePageContainer.js/92073fb793d1.js" crossorigin="anonymous" charset="utf-8" async=""></script>
