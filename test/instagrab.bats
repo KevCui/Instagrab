@@ -10,15 +10,11 @@ setup() {
     _TEST_HTML="test/instagram.html"
     _USER_NAME="test_user"
     _JSON_FROM_HTML='{"entry_data":{"ProfilePage":[{"graphql":{"user":{"id":"test_id","edge_owner_to_timeline_media":{"count":42}}}}]}}'
-    _JSON_FROM_GRAPHQL='{"data":{"user":{"id":"test_id","edge_owner_to_timeline_media":{"count":42,"page_info":{"end_cursor":"endcursorpos"},"edges":[{"node":{"id":"node1","__typename":"GraphImage","display_url":"img_url"}},{"node":{"id":"node2","__typename":"GraphVideo","video_url":"video_url"}},{"node":{"id":"node3","__typename":"GraphSidecar"}}]}}}}'
+    _JSON_FROM_GRAPHQL='{"data":{"user":{"id":"test_id","edge_owner_to_timeline_media":{"count":42,"page_info":{"end_cursor":"endcursorpos"},"edges":[{"node":{"id":"node1","__typename":"GraphImage","display_url":"img_url"}},{"node":{"id":"node2","__typename":"GraphVideo","video_url":"video_url"}},{"node":{"id":"node3","__typename":"GraphSidecar","edge_sidecar_to_children":{"edges":[{"node":{"id":"node31","__typename":"GraphVideo","video_url":"video_url31"}},{"node":{"id":"node32","__typename":"GraphImage","display_url":"img_url32"}}]}}},{"node":{"id":"node4","__typename":"n/a"}}]}}}}'
 
     _JQ=$(command -v jq)
 
     source $_SCRIPT
-}
-
-teardown() {
-    echo "cleanup"
 }
 
 @test "CHECK: print_info()" {
@@ -112,4 +108,40 @@ teardown() {
     run download_content_by_type  "$videonode" "./test_dir"
     [ "$status" -eq 0 ]
     [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphVideo: video_url" "-L -g -o ./test_dir/node2.mp4 video_url")" ]
+}
+
+@test "CHECK: download_content_by_type(): GraphSidecar > GraphVideo" {
+    _CURL=$(command -v echo)
+    videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$videonode" "./test_dir2"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphVideo: video_url31" "-L -g -o ./test_dir2/node31.mp4 video_url31")" ]
+}
+
+@test "CHECK: download_content_by_type(): GraphSidecar > GraphImage" {
+    _CURL=$(command -v echo)
+    imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$imgnode" "./test_dir2"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphImage: img_url32" "-L -g -o ./test_dir2/node32.jpg img_url32")" ]
+}
+
+@test "CHECK: download_content_by_type(): warning" {
+    brokennode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[3]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$brokennode" "./test_dir3"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(printf '%b\n%b' "\033[33m[WARNING]\033[0m Unknown type n/a of node4, skip downloading")" ]
+}
+
+@test "CHECK: download_content()" {
+    download_content_by_type() {
+        echo "$1" "$2" >&2
+    }
+    node1="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
+    node2="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
+    node3="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2]' <<< "$_JSON_FROM_GRAPHQL")"
+    node4="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[3]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content "$_JSON_FROM_GRAPHQL" "./test_dir4"
+    [ "$status" -eq 0 ]
+    [ "$output" == "$(printf '%b ./test_dir4\n%b ./test_dir4\n%b ./test_dir4\n%b ./test_dir4' "$node1" "$node2" "$node3" "$node4")" ]
 }
