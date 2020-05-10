@@ -170,7 +170,7 @@ download_content_by_type() {
             download_content_by_type "$m" "$2"
         done
     else
-        print_warn "Unknow type $t of $n, skip downloading"
+        print_warn "Unknown type $t of $n, skip downloading"
     fi
 }
 
