@@ -3,10 +3,11 @@
 # Grab images and videos from Instagram
 #
 #/ Usage:
-#/   ./instagrab.sh -u <username>
+#/   ./instagrab.sh -u <username> [-d]
 #/
 #/ Options:
 #/   -u               required, Instagram username
+#/   -d               optional, save json data
 
 set -e
 set -u
@@ -17,8 +18,15 @@ usage() {
 
 set_var() {
     _URL="https://www.instagram.com"
-    _TIME_STAMP=$(date +%s)
     _SCRIPT_PATH=$(dirname "$0")
+    _TIME_STAMP=$(date +%s)
+    _OUT_DIR="${_SCRIPT_PATH}/${_USER_NAME}_${_TIME_STAMP}"
+    _DATA_DIR="$_OUT_DIR/data"
+    if [[ "$_SAVE_JSON_DATA" == true ]]; then
+        mkdir -p "$_DATA_DIR"
+    else
+        mkdir -p "$_OUT_DIR"
+    fi
 }
 
 set_command() {
@@ -28,10 +36,14 @@ set_command() {
 
 set_args() {
     expr "$*" : ".*--help" > /dev/null && usage
-    while getopts ":hu:" opt; do
+    _SAVE_JSON_DATA=false
+    while getopts ":hdu:" opt; do
         case $opt in
             u)
                 _USER_NAME="$OPTARG"
+                ;;
+            d)
+                _SAVE_JSON_DATA=true
                 ;;
             h)
                 usage
@@ -70,9 +82,9 @@ command_not_found() {
     fi
 }
 
-check_var() {
+check_arg() {
     if [[ -z "${_USER_NAME:-}" ]]; then
-        echo '-u <username> is missing!' && usage
+        print_error "-u <username> is missing!"
     fi
 }
 
@@ -164,30 +176,32 @@ download_content_by_type() {
 
 main() {
     set_args "$@"
+    check_arg
     set_command
     set_var
-    check_var
 
-    local page hash data id res postNum reqNum curPos outDir
+    local page hash data id res postNum reqNum curPos
     page=$(download_profile_html "$_USER_NAME")
     data=$(get_json_data_from_html "$page")
     hash=$(get_query_hash "$page")
     id=$(get_user_id "$data")
 
+    [[ "$_SAVE_JSON_DATA" == true ]] && echo "$data" > "$_DATA_DIR/data.json"
+
     postNum=$(get_post_num "$data")
     reqNum=$((postNum / 50))
     [[ "$((postNum % 50))" -gt "0" ]] && reqNum=$((reqNum + 1))
 
-    print_info "Find $reqNum page(s) to download..."
-    outDir="${_SCRIPT_PATH}/${_USER_NAME}-${_TIME_STAMP}"
-    mkdir -p "$outDir"
+    print_info "Find $postNum post(s), $reqNum page(s) to download..."
     curPos=""
-    reqNum=3
     for (( i = 0; i < reqNum; i++ )); do
         print_info "Downloading $((i+1))/$reqNum..."
         res=$(query "$id" "$hash" "$curPos")
         curPos=$(get_cursor_end_position "$res")
-        download_content "$res" "$outDir"
+
+        [[ "$_SAVE_JSON_DATA" == true ]] && echo "$res" > "$_DATA_DIR/$((i + 1))-${curPos}.json"
+
+        download_content "$res" "$_OUT_DIR"
     done
 }
 
