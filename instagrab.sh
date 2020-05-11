@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Grab images and videos from Instagram
+# Grab images and videos and more from Instagram
 #
 #/ Usage:
 #/   ./instagrab.sh -u <username> [-d]
