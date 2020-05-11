@@ -1,0 +1,16 @@
+{
+    "entry_data": {
+        "ProfilePage": [
+            {
+                "graphql": {
+                    "user": {
+                        "id": "test_id",
+                        "edge_owner_to_timeline_media": {
+                            "count": 42
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

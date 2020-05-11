@@ -1,0 +1,59 @@
+{
+    "data": {
+        "user": {
+            "id": "test_id",
+            "edge_owner_to_timeline_media": {
+                "count": 42,
+                "page_info": {
+                    "end_cursor": "endcursorpos"
+                },
+                "edges": [
+                    {
+                        "node": {
+                            "id": "node1",
+                            "__typename": "GraphImage",
+                            "display_url": "img_url"
+                        }
+                    },
+                    {
+                        "node": {
+                            "id": "node2",
+                            "__typename": "GraphVideo",
+                            "video_url": "video_url"
+                        }
+                    },
+                    {
+                        "node": {
+                            "id": "node3",
+                            "__typename": "GraphSidecar",
+                            "edge_sidecar_to_children": {
+                                "edges": [
+                                    {
+                                        "node": {
+                                            "id": "node31",
+                                            "__typename": "GraphVideo",
+                                            "video_url": "video_url31"
+                                        }
+                                    },
+                                    {
+                                        "node": {
+                                            "id": "node32",
+                                            "__typename": "GraphImage",
+                                            "display_url": "img_url32"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "node": {
+                            "id": "node4",
+                            "__typename": "n/a"
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

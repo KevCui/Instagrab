@@ -9,8 +9,8 @@ setup() {
     _SCRIPT="./instagrab.sh"
     _TEST_HTML="test/instagram.html"
     _USER_NAME="test_user"
-    _JSON_FROM_HTML='{"entry_data":{"ProfilePage":[{"graphql":{"user":{"id":"test_id","edge_owner_to_timeline_media":{"count":42}}}}]}}'
-    _JSON_FROM_GRAPHQL='{"data":{"user":{"id":"test_id","edge_owner_to_timeline_media":{"count":42,"page_info":{"end_cursor":"endcursorpos"},"edges":[{"node":{"id":"node1","__typename":"GraphImage","display_url":"img_url"}},{"node":{"id":"node2","__typename":"GraphVideo","video_url":"video_url"}},{"node":{"id":"node3","__typename":"GraphSidecar","edge_sidecar_to_children":{"edges":[{"node":{"id":"node31","__typename":"GraphVideo","video_url":"video_url31"}},{"node":{"id":"node32","__typename":"GraphImage","display_url":"img_url32"}}]}}},{"node":{"id":"node4","__typename":"n/a"}}]}}}}'
+    _JSON_FROM_HTML=$(cat test/html.json)
+    _JSON_FROM_GRAPHQL=$(cat test/graphgl.json)
 
     _JQ=$(command -v jq)
 
@@ -95,6 +95,7 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphImage" {
+    _SAVE_JSON_DATA=false
     _CURL=$(command -v echo)
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir"
@@ -103,6 +104,7 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphVideo" {
+    _SAVE_JSON_DATA=false
     _CURL=$(command -v echo)
     videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$videonode" "./test_dir"
@@ -111,6 +113,7 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphSidecar > GraphVideo" {
+    _SAVE_JSON_DATA=false
     _CURL=$(command -v echo)
     videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$videonode" "./test_dir2"
@@ -119,6 +122,7 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphSidecar > GraphImage" {
+    _SAVE_JSON_DATA=false
     _CURL=$(command -v echo)
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir2"
@@ -127,10 +131,22 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): warning" {
+    _SAVE_JSON_DATA=false
     brokennode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[3]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$brokennode" "./test_dir3"
     [ "$status" -eq 0 ]
     [ "$output" = "$(printf '%b\n%b' "\033[33m[WARNING]\033[0m Unknown type n/a of node4, skip downloading")" ]
+}
+
+@test "CHECK: download_content_by_type(): save json data" {
+    _SAVE_JSON_DATA=true
+    _CURL=$(command -v echo)
+    _DATA_DIR=$(mktemp -d)
+    imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$imgnode" "./test_dir2"
+    [ "$status" -eq 0 ]
+    [ "$(md5sum $_DATA_DIR/node32.json | awk '{print $1}')" = "c2981123d055bd697f3c99bb1ee1edf3" ]
+    [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphImage: img_url32" "-L -g -o ./test_dir2/node32.jpg img_url32")" ]
 }
 
 @test "CHECK: download_content()" {
