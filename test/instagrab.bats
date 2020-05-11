@@ -207,7 +207,7 @@ setup() {
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir2"
     [ "$status" -eq 0 ]
-    [ "$(md5sum $_DATA_DIR/node32.json | awk '{print $1}')" = "1e47b609d7c7bc3c24480b6461d386e4" ]
+    [ "$(md5sum $_DATA_DIR/node32.json | awk '{print $1}')" = "c2981123d055bd697f3c99bb1ee1edf3" ]
     [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphImage: img_url32" "-L -g -o ./test_dir2/node32.jpg img_url32")" ]
 }
 

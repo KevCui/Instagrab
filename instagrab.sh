@@ -219,6 +219,7 @@ download_content_by_type() {
     n=$($_JQ -r '.node.id' <<< "$1")
     t=$($_JQ -r '.node.__typename' <<< "$1")
     ts=$($_JQ -r '.node.taken_at_timestamp' <<< "$1")
+    [[ "$ts" == "null" ]] && ts="$_FROM_DATE_UNIXTIME"
 
     if [[ $(compare_time "$ts" "$_FROM_DATE_UNIXTIME") != "<" && $(compare_time "$ts" "$_TO_DATE_UNIXTIME") != ">" ]]; then
         [[ "$_SKIP_JSON_DATA" == false && "$n" != "" ]] && $_JQ -r <<< "$1" > "$_DATA_DIR/${n}.json"
