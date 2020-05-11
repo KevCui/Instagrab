@@ -12,6 +12,7 @@
                         "node": {
                             "id": "node1",
                             "__typename": "GraphImage",
+                            "taken_at_timestamp": 20000110,
                             "display_url": "img_url"
                         }
                     },
@@ -19,6 +20,7 @@
                         "node": {
                             "id": "node2",
                             "__typename": "GraphVideo",
+                            "taken_at_timestamp": 20000111,
                             "video_url": "video_url"
                         }
                     },
@@ -32,6 +34,7 @@
                                         "node": {
                                             "id": "node31",
                                             "__typename": "GraphVideo",
+                                            "taken_at_timestamp": 20000112,
                                             "video_url": "video_url31"
                                         }
                                     },
@@ -39,6 +42,7 @@
                                         "node": {
                                             "id": "node32",
                                             "__typename": "GraphImage",
+                                            "taken_at_timestamp": 20000113,
                                             "display_url": "img_url32"
                                         }
                                     }
@@ -49,7 +53,20 @@
                     {
                         "node": {
                             "id": "node4",
+                            "taken_at_timestamp": 20000114,
                             "__typename": "n/a"
+                        }
+                    },
+                    {
+                        "node": {
+                            "id": "node5",
+                            "taken_at_timestamp": 10001010
+                        }
+                    },
+                    {
+                        "node": {
+                            "id": "node6",
+                            "taken_at_timestamp": 30301010
                         }
                     }
                 ]
