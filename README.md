@@ -9,6 +9,7 @@ Instagrab
 - No need to register Instagram API
 - Download images and videos from Instagram directly
 - Download json data in additional, including profile data, image/video data...
+- Choose to skip image download, or/and video download, or/and json data download
 
 ## Dependency
 
@@ -19,11 +20,13 @@ Instagrab
 
 ```
 Usage:
-  ./instagrab.sh -u <username> [-d]
+  ./instagrab.sh -u <username> [-d] [-i] [-v]
 
 Options:
   -u               required, Instagram username
-  -d               optional, save json data
+  -d               optional, skip json data
+  -i               optional, skip image
+  -v               optional, skip video
 ```
 
 ### How to run tests

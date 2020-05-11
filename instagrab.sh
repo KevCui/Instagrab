@@ -3,11 +3,13 @@
 # Grab images and videos and more from Instagram
 #
 #/ Usage:
-#/   ./instagrab.sh -u <username> [-d]
+#/   ./instagrab.sh -u <username> [-d] [-i] [-v]
 #/
 #/ Options:
 #/   -u               required, Instagram username
-#/   -d               optional, save json data
+#/   -d               optional, skip json data download
+#/   -i               optional, skip image download
+#/   -v               optional, skip video download
 
 set -e
 set -u
@@ -22,10 +24,10 @@ set_var() {
     _TIME_STAMP=$(date +%s)
     _OUT_DIR="${_SCRIPT_PATH}/${_USER_NAME}_${_TIME_STAMP}"
     _DATA_DIR="$_OUT_DIR/data"
-    if [[ "$_SAVE_JSON_DATA" == true ]]; then
-        mkdir -p "$_DATA_DIR"
-    else
+    if [[ "$_SKIP_JSON_DATA" == true ]]; then
         mkdir -p "$_OUT_DIR"
+    else
+        mkdir -p "$_DATA_DIR"
     fi
 }
 
@@ -36,14 +38,22 @@ set_command() {
 
 set_args() {
     expr "$*" : ".*--help" > /dev/null && usage
-    _SAVE_JSON_DATA=false
-    while getopts ":hdu:" opt; do
+    _SKIP_JSON_DATA=false
+    _SKIP_IMAGE=false
+    _SKIP_VIDEO=false
+    while getopts ":hdivu:" opt; do
         case $opt in
             u)
                 _USER_NAME="$OPTARG"
                 ;;
             d)
-                _SAVE_JSON_DATA=true
+                _SKIP_JSON_DATA=true
+                ;;
+            i)
+                _SKIP_IMAGE=true
+                ;;
+            v)
+                _SKIP_VIDEO=true
                 ;;
             h)
                 usage
@@ -154,16 +164,24 @@ download_content_by_type() {
     n=$($_JQ -r '.node.id' <<< "$1")
     t=$($_JQ -r '.node.__typename' <<< "$1")
 
-    [[ "$_SAVE_JSON_DATA" == true && "$n" != "" ]] && $_JQ -r <<< "$1" > "$_DATA_DIR/${n}.json"
+    [[ "$_SKIP_JSON_DATA" == false && "$n" != "" ]] && $_JQ -r <<< "$1" > "$_DATA_DIR/${n}.json"
 
     if [[ "$t" == "GraphImage" ]]; then
-        m=$($_JQ -r '.node.display_url' <<< "$1")
-        print_info ">> $t: $m"
-        $_CURL -L -g -o "${2}/${n}.jpg" "$m"
+        if [[ "$_SKIP_IMAGE" == true ]]; then
+            print_info "Skip image download"
+        else
+            m=$($_JQ -r '.node.display_url' <<< "$1")
+            print_info ">> $t: $m"
+            $_CURL -L -g -o "${2}/${n}.jpg" "$m"
+        fi
     elif [[ "$t" == "GraphVideo" ]]; then
-        m=$($_JQ -r '.node.video_url' <<< "$1")
-        print_info ">> $t: $m"
-        $_CURL -L -g -o "${2}/${n}.mp4" "$m"
+        if [[ "$_SKIP_VIDEO" == true ]]; then
+            print_info "Skip video download"
+        else
+            m=$($_JQ -r '.node.video_url' <<< "$1")
+            print_info ">> $t: $m"
+            $_CURL -L -g -o "${2}/${n}.mp4" "$m"
+        fi
     elif [[ "$t" == "GraphSidecar" ]]; then
         local cl
         cl=$($_JQ -r '.node.edge_sidecar_to_children.edges | length' <<< "$1")
@@ -189,13 +207,13 @@ main() {
     hash=$(get_query_hash "$page")
     id=$(get_user_id "$data")
 
-    [[ "$_SAVE_JSON_DATA" == true ]] && $_JQ -r <<< "$data" > "$_DATA_DIR/data.json"
+    [[ "$_SKIP_JSON_DATA" == false ]] && $_JQ -r <<< "$data" > "$_DATA_DIR/data.json"
 
     postNum=$(get_post_num "$data")
     reqNum=$((postNum / 50))
     [[ "$((postNum % 50))" -gt "0" ]] && reqNum=$((reqNum + 1))
 
-    print_info "Find $postNum post(s), $reqNum page(s) to download..."
+    print_info "Find $postNum post(s), $reqNum page(s)"
     curPos=""
     for (( i = 0; i < reqNum; i++ )); do
         print_info "Downloading $((i+1))/$reqNum..."

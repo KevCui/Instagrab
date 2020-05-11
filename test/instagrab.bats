@@ -11,8 +11,12 @@ setup() {
     _USER_NAME="test_user"
     _JSON_FROM_HTML=$(cat test/html.json)
     _JSON_FROM_GRAPHQL=$(cat test/graphgl.json)
+    _SKIP_JSON_DATA=true
+    _SKIP_IMAGE=false
+    _SKIP_VIDEO=false
 
     _JQ=$(command -v jq)
+    _CURL=$(command -v echo)
 
     source $_SCRIPT
 }
@@ -95,26 +99,36 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphImage" {
-    _SAVE_JSON_DATA=false
-    _CURL=$(command -v echo)
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir"
     [ "$status" -eq 0 ]
     [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphImage: img_url" "-L -g -o ./test_dir/node1.jpg img_url")" ]
 }
 
+@test "CHECK: download_content_by_type(): GraphImage skipped" {
+    _SKIP_IMAGE=true
+    imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$imgnode" "./test_dir"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(printf '%b\n' "\033[32m[INFO]\033[0m Skip image download")" ]
+}
+
 @test "CHECK: download_content_by_type(): GraphVideo" {
-    _SAVE_JSON_DATA=false
-    _CURL=$(command -v echo)
     videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$videonode" "./test_dir"
     [ "$status" -eq 0 ]
     [ "$output" = "$(printf '%b\n%b' "\033[32m[INFO]\033[0m >> GraphVideo: video_url" "-L -g -o ./test_dir/node2.mp4 video_url")" ]
 }
 
+@test "CHECK: download_content_by_type(): GraphVideo skipped" {
+    _SKIP_VIDEO=true
+    videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
+    run download_content_by_type  "$videonode" "./test_dir"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(printf '%b\n' "\033[32m[INFO]\033[0m Skip video download")" ]
+}
+
 @test "CHECK: download_content_by_type(): GraphSidecar > GraphVideo" {
-    _SAVE_JSON_DATA=false
-    _CURL=$(command -v echo)
     videonode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[0]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$videonode" "./test_dir2"
     [ "$status" -eq 0 ]
@@ -122,8 +136,6 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): GraphSidecar > GraphImage" {
-    _SAVE_JSON_DATA=false
-    _CURL=$(command -v echo)
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir2"
     [ "$status" -eq 0 ]
@@ -131,7 +143,6 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): warning" {
-    _SAVE_JSON_DATA=false
     brokennode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[3]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$brokennode" "./test_dir3"
     [ "$status" -eq 0 ]
@@ -139,8 +150,7 @@ setup() {
 }
 
 @test "CHECK: download_content_by_type(): save json data" {
-    _SAVE_JSON_DATA=true
-    _CURL=$(command -v echo)
+    _SKIP_JSON_DATA=false
     _DATA_DIR=$(mktemp -d)
     imgnode="$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges[2].node.edge_sidecar_to_children.edges[1]' <<< "$_JSON_FROM_GRAPHQL")"
     run download_content_by_type  "$imgnode" "./test_dir2"
