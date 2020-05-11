@@ -153,6 +153,9 @@ download_content_by_type() {
     local n t m
     n=$($_JQ -r '.node.id' <<< "$1")
     t=$($_JQ -r '.node.__typename' <<< "$1")
+
+    [[ "$_SAVE_JSON_DATA" == true && "$n" != "" ]] && $_JQ -r <<< "$1" > "$_DATA_DIR/${n}.json"
+
     if [[ "$t" == "GraphImage" ]]; then
         m=$($_JQ -r '.node.display_url' <<< "$1")
         print_info ">> $t: $m"
@@ -186,7 +189,7 @@ main() {
     hash=$(get_query_hash "$page")
     id=$(get_user_id "$data")
 
-    [[ "$_SAVE_JSON_DATA" == true ]] && echo "$data" > "$_DATA_DIR/data.json"
+    [[ "$_SAVE_JSON_DATA" == true ]] && $_JQ -r <<< "$data" > "$_DATA_DIR/data.json"
 
     postNum=$(get_post_num "$data")
     reqNum=$((postNum / 50))
@@ -198,9 +201,6 @@ main() {
         print_info "Downloading $((i+1))/$reqNum..."
         res=$(query "$id" "$hash" "$curPos")
         curPos=$(get_cursor_end_position "$res")
-
-        [[ "$_SAVE_JSON_DATA" == true ]] && echo "$res" > "$_DATA_DIR/$((i + 1))-${curPos}.json"
-
         download_content "$res" "$_OUT_DIR"
     done
 }
