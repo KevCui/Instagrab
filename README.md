@@ -32,7 +32,7 @@ Options:
   -t <yyyymmdd>    optional, to date, format yyyymmdd
 ```
 
-### How to run tests
+## How to run tests
 
 ```bash
 ~$ bats test/instagrab.bats
@@ -40,4 +40,4 @@ Options:
 
 ## Disclaimer
 
-The purpose of this script is to download media contents from Instagram in order to backup and archive them. Please do NOT copy or distribute downloaded contents to any third party. Please do remember that the copyright of contents always belongs to the owner of Instagram account. Please use this script at your own responsibility.
+The purpose of this script is to download media contents from Instagram in order to backup and archive them. Please do NOT copy or distribute downloaded contents to others. Please do remember that the copyright of contents always belongs to the owner of Instagram account. Please use this script at your own responsibility.
