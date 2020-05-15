@@ -141,9 +141,9 @@ check_arg() {
     fi
 }
 
-download_profile_html() {
-    # $1: username
-    $_CURL -sS "$_URL/$1/"
+run_curl() {
+    # $1: URL
+    $_CURL -sS "$1"
 }
 
 get_query_hash() {
@@ -153,7 +153,7 @@ get_query_hash() {
         | grep '<script' \
         | sed -E 's/.*src=//' \
         | awk -F '"' '{print $2}')
-    j=$($_CURL -sS "${_URL}${l}")
+    j=$(run_curl "${_URL}${l}")
     grep "queryId" <<< "$j" \
         | grep "edge_owner_to_timeline_media" \
         | sed -E 's/.*queryId//' \
@@ -180,13 +180,6 @@ get_post_num() {
 get_cursor_end_position() {
     # $1: json data from graphql
     $_JQ -r '.data.user.edge_owner_to_timeline_media.page_info.end_cursor' <<< "$1"
-}
-
-query() {
-    # $1: id
-    # $2: query hash
-    # $3: end cursor positon
-    $_CURL -sS "$_URL/graphql/query?query_hash=${2}&variables=%7B%22id%22%3A%22${1}%22%2C%22first%22%3A50%2C%22after%22%3A%22${3}%22%7D"
 }
 
 download_content() {
@@ -266,7 +259,7 @@ main() {
     set_var
 
     local page hash data id res postNum reqNum curPos
-    page=$(download_profile_html "$_USER_NAME")
+    page=$(run_curl "$_URL/$_USER_NAME/")
     data=$(get_json_data_from_html "$page")
     hash=$(get_query_hash "$page")
     id=$(get_user_id "$data")
@@ -281,7 +274,7 @@ main() {
     curPos=""
     for (( i = 0; i < reqNum; i++ )); do
         print_info "Checking $((i+1))/$reqNum..."
-        res=$(query "$id" "$hash" "$curPos")
+        res=$(run_curl "$_URL/graphql/query?query_hash=${hash}&variables=%7B%22id%22%3A%22${id}%22%2C%22first%22%3A50%2C%22after%22%3A%22${curPos}%22%7D")
         curPos=$(get_cursor_end_position "$res")
         download_content "$res" "$_OUT_DIR"
     done

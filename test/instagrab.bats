@@ -8,6 +8,7 @@ BATS_TEST_SKIPPED=
 setup() {
     _SCRIPT="./instagrab.sh"
     _TEST_HTML="test/instagram.html"
+    _TEST_JS="test/test.js"
     _USER_NAME="test_user"
     _JSON_FROM_HTML=$(cat test/html.json)
     _JSON_FROM_GRAPHQL=$(cat test/graphgl.json)
@@ -122,14 +123,15 @@ setup() {
     [ "$output" = "{this is test data here}" ]
 }
 
-# [NOT GREAT NOT TERRIBLE] it needs network connection and depend on request
-# TODO: need to make local mock
 @test "CHECK: get_query_hash()" {
-    _URL="https://www.instagram.com"
-    _CURL=$(command -v curl)
+    run_curl() {
+        echo "$1" >&2
+        cat "$_TEST_JS"
+    }
+    _URL="testurl"
     run get_query_hash "$(cat "$_TEST_HTML")"
     [ "$status" -eq 0 ]
-    [ "$output" = "9dcf6e1a98bc7f6e92953d5a61027b98" ]
+    [ "$output" = "$(printf '%b\n%b' "testurl/static/bundles/metro/ProfilePageContainer.js/test.js" "thisisatesthash")" ]
 }
 
 @test "CHECK: get_user_id()" {
