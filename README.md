@@ -9,8 +9,8 @@ Instagrab
 - No need to register Instagram API
 - Download images and videos from Instagram directly
 - Download json data in additional, including profile data, image/video data...
-- Skip image download, or/and video download, or/and json data download
-- Set time period to download only contents which were published in this period
+- Toggle image download, or/and video download, or/and json data download
+- Download only contents published in any time period
 
 ## Dependency
 
