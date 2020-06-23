@@ -1,7 +1,14 @@
-Instagrab
-=========
+# Instagrab
 
 > Grab images and videos and more from Instagram
+
+## Table of Contents
+
+- [Features](#features)
+- [Dependency](#dependency)
+- [Usage](#usage)
+- [How to run tests](#how-to-run-tests)
+- [Disclaimer](#disclaimer)
 
 ## Features
 
