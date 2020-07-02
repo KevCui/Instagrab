@@ -6,23 +6,32 @@
 
 - [Features](#features)
 - [Dependency](#dependency)
+- [Download](#download)
 - [Usage](#usage)
 - [How to run tests](#how-to-run-tests)
 - [Disclaimer](#disclaimer)
 
 ## Features
 
+- Single Bash script
 - No need to sign in Instagram account
 - No need to register Instagram API
 - Download images and videos from Instagram directly
 - Download json data in additional, including profile data, image/video data...
-- Toggle image download, or/and video download, or/and json data download
 - Download only contents published in any time period
+- Toggle image download, or/and video download, or/and json data download
 
 ## Dependency
 
 - [curl](https://curl.haxx.se/download.html)
 - [jq](https://stedolan.github.io/jq/download/)
+
+## Download
+
+```bash
+~$ wget https://raw.githubusercontent.com/KevCui/Instagrab/master/instagrab.sh
+~$ chmod +x instagrab.sh
+```
 
 ## Usage
 
