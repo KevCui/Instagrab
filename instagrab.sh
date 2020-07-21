@@ -215,7 +215,7 @@ download_content_by_type() {
     [[ "$ts" == "null" ]] && ts="$_FROM_DATE_UNIXTIME"
 
     if [[ $(compare_time "$ts" "$_FROM_DATE_UNIXTIME") != "<" && $(compare_time "$ts" "$_TO_DATE_UNIXTIME") != ">" ]]; then
-        [[ "$_SKIP_JSON_DATA" == false && "$n" != "" ]] && $_JQ -r <<< "$1" > "$_DATA_DIR/${n}.json"
+        [[ "$_SKIP_JSON_DATA" == false && "$n" != "" ]] && $_JQ -r . <<< "$1" > "$_DATA_DIR/${n}.json"
         if [[ "$t" == "GraphImage" ]]; then
             if [[ "$_SKIP_IMAGE" == true ]]; then
                 print_info "Skip image download"

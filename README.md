@@ -1,4 +1,4 @@
-# Instagrab
+# Instagrab ![CI](https://github.com/KevCui/instagrab/workflows/CI/badge.svg)
 
 > Grab images and videos and more from Instagram
 
