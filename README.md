@@ -53,14 +53,14 @@ Options:
 
 - Download images, videos and JSON data from `@instagram` account, published since `21 August 2020`:
 
-```
+```bash
 ~$ ./instagrab.sh -u instagram -f 20200821
 [INFO] Find 6457 post(s), 130 page(s)
 [INFO] Checking 1/130...
 ...
 ```
 
-After the execution, the downloaded images, videos and JSON data can be found inside `~/instagram_<unixtime>` folder
+After the execution, the downloaded images, videos and JSON data can be found inside `~/instagram_<unixtime>` folder.
 
 ## How to run tests
 
@@ -70,4 +70,4 @@ After the execution, the downloaded images, videos and JSON data can be found in
 
 ## Disclaimer
 
-The purpose of this script is to download media contents from Instagram in order to backup and archive them. Please do NOT copy or distribute downloaded contents to others. Please do remember that the copyright of contents always belongs to the owner of Instagram account. Please use this script at your own responsibility.
+The purpose of this script is to download media contents from Instagram in order to back up and archive them. Please do NOT copy or distribute downloaded contents to others. Please do remember that the copyright of contents always belongs to the owner of Instagram account. Please use this script at your own responsibility.
