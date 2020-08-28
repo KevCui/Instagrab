@@ -149,7 +149,7 @@ run_curl() {
 get_query_hash() {
     # $1: profile html
     local l j
-    l=$(grep '/ProfilePageContainer.js' <<< "$1" \
+    l=$(grep '/Consumer.js' <<< "$1" \
         | grep '<script' \
         | sed -E 's/.*src=//' \
         | awk -F '"' '{print $2}')
