@@ -131,7 +131,7 @@ setup() {
     _URL="testurl"
     run get_query_hash "$(cat "$_TEST_HTML")"
     [ "$status" -eq 0 ]
-    [ "$output" = "$(printf '%b\n%b' "testurl/static/bundles/metro/ProfilePageContainer.js/test.js" "thisisatesthash")" ]
+    [ "$output" = "$(printf '%b\n%b' "testurl/static/bundles/metro/Consumer.js/test.js" "thisisatesthash")" ]
 }
 
 @test "CHECK: get_user_id()" {

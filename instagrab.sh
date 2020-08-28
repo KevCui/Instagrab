@@ -7,7 +7,7 @@
 #/
 #/ Options:
 #/   -u               required, Instagram username
-#/   -d               optional, skip json data download
+#/   -d               optional, skip JSON data download
 #/   -i               optional, skip image download
 #/   -v               optional, skip video download
 #/   -f <yyyymmdd>    optional, from date, format yyyymmdd
@@ -168,22 +168,22 @@ get_json_data_from_html() {
 }
 
 get_user_id() {
-    # $1: json data from html
+    # $1: JSON data from html
     $_JQ -r '.entry_data.ProfilePage[].graphql.user.id' <<< "$1"
 }
 
 get_post_num() {
-    # $1: json data from html
+    # $1: JSON data from html
     $_JQ -r '.entry_data.ProfilePage[].graphql.user.edge_owner_to_timeline_media.count' <<< "$1"
 }
 
 get_cursor_end_position() {
-    # $1: json data from graphql
+    # $1: JSON data from graphql
     $_JQ -r '.data.user.edge_owner_to_timeline_media.page_info.end_cursor' <<< "$1"
 }
 
 download_content() {
-    # $1: json data from graphql
+    # $1: JSON data from graphql
     # $2: output directory
     local l j
     l=$($_JQ -r '.data.user.edge_owner_to_timeline_media.edges | length' <<< "$1")
@@ -206,7 +206,7 @@ compare_time() {
 }
 
 download_content_by_type() {
-    # $1: json data, start with "node" under edges
+    # $1: JSON data, start with "node" under edges
     # $2: output directory
     local n t m ts
     n=$($_JQ -r '.node.id' <<< "$1")
