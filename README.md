@@ -8,6 +8,7 @@
 - [Dependency](#dependency)
 - [Download](#download)
 - [Usage](#usage)
+  - [Example](#example)
 - [How to run tests](#how-to-run-tests)
 - [Disclaimer](#disclaimer)
 
@@ -17,9 +18,9 @@
 - No need to sign in Instagram account
 - No need to register Instagram API
 - Download images and videos from Instagram directly
-- Download json data in additional, including profile data, image/video data...
+- Download JSON data in additional, including profile data, image/video data...
 - Download only contents published in any time period
-- Toggle image download, or/and video download, or/and json data download
+- Toggle image download, or/and video download, or/and JSON data download
 
 ## Dependency
 
@@ -41,12 +42,25 @@ Usage:
 
 Options:
   -u               required, Instagram username
-  -d               optional, skip json data download
+  -d               optional, skip JSON data download
   -i               optional, skip image download
   -v               optional, skip video download
   -f <yyyymmdd>    optional, from date, format yyyymmdd
   -t <yyyymmdd>    optional, to date, format yyyymmdd
 ```
+
+### Example
+
+- Download images, videos and JSON data from `@instagram` account, published since `21 August 2020`:
+
+```
+~$ ./instagrab.sh -u instagram -f 20200821
+[INFO] Find 6457 post(s), 130 page(s)
+[INFO] Checking 1/130...
+...
+```
+
+After the execution, the downloaded images, videos and JSON data can be found inside `~/instagram_<unixtime>` folder
 
 ## How to run tests
 
