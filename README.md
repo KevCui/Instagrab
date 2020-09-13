@@ -71,3 +71,7 @@ After the execution, the downloaded images, videos and JSON data can be found in
 ## Disclaimer
 
 The purpose of this script is to download media contents from Instagram in order to back up and archive them. Please do NOT copy or distribute downloaded contents to others. Please do remember that the copyright of contents always belongs to the owner of Instagram account. Please use this script at your own responsibility.
+
+---
+
+<a href="https://www.buymeacoffee.com/kevcui" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-orange.png" alt="Buy Me A Coffee" height="60px" width="217px"></a>
