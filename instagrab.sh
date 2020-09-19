@@ -264,7 +264,7 @@ main() {
     hash=$(get_query_hash "$page")
     id=$(get_user_id "$data")
 
-    [[ "$_SKIP_JSON_DATA" == false ]] && $_JQ -r <<< "$data" > "$_DATA_DIR/data.json"
+    [[ "$_SKIP_JSON_DATA" == false ]] && $_JQ -r . <<< "$data" > "$_DATA_DIR/data.json"
 
     postNum=$(get_post_num "$data")
     reqNum=$((postNum / 50))
